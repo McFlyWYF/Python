@@ -1,0 +1,10 @@
+# Python基础学习
+## Python变量类型
+* 1.变量赋值
+* 2.标准数据类型
+* 3.Python数字
+* 4.Python字符串
+* 5.Python列表
+* 6.Python元组
+* 7.Python字典
+* 8.Python数据类型转换

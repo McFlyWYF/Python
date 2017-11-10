@@ -108,3 +108,13 @@ if isinstance(a,int):
     print("True")
 else:
     print("False")
+
+a = 123
+print(chr(a))
+b = 'a'
+print(ord(b))
+print(hex(a))
+print(oct(a))
+c = 12.43
+print(int(c))
+print(complex(1.2,4.5))

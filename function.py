@@ -66,3 +66,97 @@ def my_data(a, b, c):
 n1,n2 = my_data(1,-2,-1)
 print(n1,n2)
 
+'''
+import tensorflow as tf
+hello = tf.constant("Hello TensorFlow")
+sess = tf.Session()
+print(sess.run(hello))
+
+a = tf.constant(10)
+b = tf.constant(20)
+print(sess.run(a+b))
+'''
+
+#函数的参数
+
+def power(x,n):          #位置参数
+    s = 1;
+    while n > 0:
+        n = n - 1;
+        s = s * x;
+    return s
+
+a = power(-1,3)
+print(a)
+
+def power(x,n = 2):          #默认参数
+    s = 1;
+    while n > 0:
+        n = n - 1;
+        s = s * x;
+    return s
+
+b = power(5)
+print(b)
+
+c = power(2,3)
+print(c)
+
+
+#当函数有多个参数时，把变化大的参数放前面，变化小的参数放后面。变化小的参数就可以作为默认参数。
+def enroll(name,gender,age,school = "NUC"):
+    print("name: ",name)
+    print("gender: ",gender)
+    print("age: ",age)
+    print("school: ",school)
+
+enroll("wang","M",20)
+enroll("zhang","W",18,"TYSchool")
+
+'''默认参数必须指向不变对象！
+主要是为了解决
+print(add_end())
+print(add_end())
+['END']
+['END', 'END']
+'''
+
+def add_end(list = None):
+    if list is None:
+       list = []
+    list.append("END")
+    return list
+
+print(add_end([1,2,3]))
+
+print(add_end())
+print(add_end())
+
+
+def calc(*numbers):             #可变参数
+    sum = 0;
+    for n in numbers:
+        sum = sum + n * n
+    return sum
+
+print(calc(1,2,3))
+print(calc())
+
+list = [1,2]
+print(calc(list[0],list[1]))
+
+# 简化代码
+print(calc(*list))
+
+#关键字参数，关键字参数允许你传入0个或任意个含参数名的参数，这些关键字参数在函数内部自动组装为一个dict。
+def person(name,age,**kw):
+    print('name:',name,'age:',age,'other:',kw)
+
+print(person('Bob',20))
+print(person('Green',36,city = 'BeiJing'))
+print(person('James',52,gender = 'M',city = 'CAVS'))
+
+#简化代码
+extra= {'city':'TaiYuan','Job':'Android'}
+print(person('Jhon',50,**extra))
+

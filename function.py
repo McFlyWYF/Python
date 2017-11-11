@@ -79,7 +79,8 @@ print(sess.run(a+b))
 
 #函数的参数
 
-def power(x,n):          #位置参数
+#位置参数
+def power(x,n):
     s = 1;
     while n > 0:
         n = n - 1;
@@ -89,7 +90,8 @@ def power(x,n):          #位置参数
 a = power(-1,3)
 print(a)
 
-def power(x,n = 2):          #默认参数
+#默认参数
+def power(x,n = 2):
     s = 1;
     while n > 0:
         n = n - 1;
@@ -133,7 +135,8 @@ print(add_end())
 print(add_end())
 
 
-def calc(*numbers):             #可变参数
+# 可变参数
+def calc(*numbers):     # *numbers : tuple = ()
     sum = 0;
     for n in numbers:
         sum = sum + n * n
@@ -149,7 +152,7 @@ print(calc(list[0],list[1]))
 print(calc(*list))
 
 #关键字参数，关键字参数允许你传入0个或任意个含参数名的参数，这些关键字参数在函数内部自动组装为一个dict。
-def person(name,age,**kw):
+def person(name,age,**kw):   # **kw : dict = {}
     print('name:',name,'age:',age,'other:',kw)
 
 print(person('Bob',20))
@@ -160,3 +163,55 @@ print(person('James',52,gender = 'M',city = 'CAVS'))
 extra= {'city':'TaiYuan','Job':'Android'}
 print(person('Jhon',50,**extra))
 
+
+#命名关键字参数
+#如果其中有一个可变参数，后面可以不加 *
+def person1(name,age,*args,city,job):
+    print(name,age,args,city,job)
+
+args = [1,2,3,4]
+print(person1('wang,',26,args,city='ShangHai',job='Sale'))
+
+# 命名关键字前面加必须 *
+def person2(name,age,*,city,job):
+    print(name,age,city,job)
+
+print(person2('zhao',30,city='GuangZhou',job='Business'))
+
+#参数组合
+#参数定义的顺序必须是：必选参数、默认参数、可变参数、命名关键字参数和关键字参数。
+
+def f1(a,b=0,*c,d,**e):
+    print(a,b,c,d,e)
+
+c = (1,2,3)
+e = {'f':12}
+print(f1(1,2,*c,d = 0,**e))
+
+# 注意 ：*args是可变参数，args接收的是一个tuple；
+#       **kw是关键字参数，kw接收的是一个dict。
+#       可变参数既可以直接传入：func(1, 2, 3)，又可以先组装list或tuple，再通过*args传入：func(*(1, 2, 3))；
+#       关键字参数既可以直接传入：func(a=1, b=2)，又可以先组装dict，再通过**kw传入：func(**{'a': 1, 'b': 2})。
+
+
+# 递归函数
+def fac(n):
+    if n == 1:
+        return 1
+    return n*fac(n-1)
+
+print(fac(5))
+print(fac(1))
+
+#递归调用的次数过多，会导致栈溢出,解决递归调用栈溢出的方法是通过尾递归优化.
+#尾递归是指，在函数返回的时候，调用自身本身，并且，return语句不能包含表达式,使递归本身无论调用多少次，都只占用一个栈帧.
+
+#尾递归
+def fac(n):
+    return fac_iter(n,1)
+
+def fac_iter(num,product):
+    if num == 1:
+        return product
+    return fac_iter(num - 1,num * product)
+print(fac(5))

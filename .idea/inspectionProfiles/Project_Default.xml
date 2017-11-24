@@ -5,6 +5,7 @@
       <option name="ignoredIdentifiers">
         <list>
           <option value="Deep.mlp2.readmnist" />
+          <option value="tensorflow.types" />
         </list>
       </option>
     </inspection_tool>

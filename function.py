@@ -57,14 +57,16 @@ print(x, y)
 print(move(100, 100, 60, math.pi / 6))
 print(z)
 
+
 # 一元二次方程求解函数
 def my_data(a, b, c):
-    x1 = (-b + math.sqrt(b * b - 4 * a * c)) / 2*a
-    x2 = (-b - math.sqrt(b * b - 4 * a * c)) / 2*a
-    return x1,x2
+    x1 = (-b + math.sqrt(b * b - 4 * a * c)) / 2 * a
+    x2 = (-b - math.sqrt(b * b - 4 * a * c)) / 2 * a
+    return x1, x2
 
-n1,n2 = my_data(1,-2,-1)
-print(n1,n2)
+
+n1, n2 = my_data(1, -2, -1)
+print(n1, n2)
 
 '''
 import tensorflow as tf
@@ -77,43 +79,48 @@ b = tf.constant(20)
 print(sess.run(a+b))
 '''
 
-#函数的参数
 
-#位置参数
-def power(x,n):
+# 函数的参数
+
+# 位置参数
+def power(x, n):
     s = 1;
     while n > 0:
         n = n - 1;
         s = s * x;
     return s
 
-a = power(-1,3)
+
+a = power(-1, 3)
 print(a)
 
-#默认参数
-def power(x,n = 2):
+
+# 默认参数
+def power(x, n=2):
     s = 1;
     while n > 0:
         n = n - 1;
         s = s * x;
     return s
+
 
 b = power(5)
 print(b)
 
-c = power(2,3)
+c = power(2, 3)
 print(c)
 
 
-#当函数有多个参数时，把变化大的参数放前面，变化小的参数放后面。变化小的参数就可以作为默认参数。
-def enroll(name,gender,age,school = "NUC"):
-    print("name: ",name)
-    print("gender: ",gender)
-    print("age: ",age)
-    print("school: ",school)
+# 当函数有多个参数时，把变化大的参数放前面，变化小的参数放后面。变化小的参数就可以作为默认参数。
+def enroll(name, gender, age, school="NUC"):
+    print("name: ", name)
+    print("gender: ", gender)
+    print("age: ", age)
+    print("school: ", school)
 
-enroll("wang","M",20)
-enroll("zhang","W",18,"TYSchool")
+
+enroll("wang", "M", 20)
+enroll("zhang", "W", 18, "TYSchool")
 
 '''默认参数必须指向不变对象！
 主要是为了解决
@@ -123,70 +130,81 @@ print(add_end())
 ['END', 'END']
 '''
 
-def add_end(list = None):
+
+def add_end(list=None):
     if list is None:
-       list = []
+        list = []
     list.append("END")
     return list
 
-print(add_end([1,2,3]))
+
+print(add_end([1, 2, 3]))
 
 print(add_end())
 print(add_end())
 
 
 # 可变参数
-def calc(*numbers):     # *numbers : tuple = ()
+def calc(*numbers):  # *numbers : tuple = ()
     sum = 0;
     for n in numbers:
         sum = sum + n * n
     return sum
 
-print(calc(1,2,3))
+
+print(calc(1, 2, 3))
 print(calc())
 
-list = [1,2]
-print(calc(list[0],list[1]))
+list = [1, 2]
+print(calc(list[0], list[1]))
 
 # 简化代码
 print(calc(*list))
 
-#关键字参数，关键字参数允许你传入0个或任意个含参数名的参数，这些关键字参数在函数内部自动组装为一个dict。
-def person(name,age,**kw):   # **kw : dict = {}
-    print('name:',name,'age:',age,'other:',kw)
 
-print(person('Bob',20))
-print(person('Green',36,city = 'BeiJing'))
-print(person('James',52,gender = 'M',city = 'CAVS'))
-
-#简化代码
-extra= {'city':'TaiYuan','Job':'Android'}
-print(person('Jhon',50,**extra))
+# 关键字参数，关键字参数允许你传入0个或任意个含参数名的参数，这些关键字参数在函数内部自动组装为一个dict。
+def person(name, age, **kw):  # **kw : dict = {}
+    print('name:', name, 'age:', age, 'other:', kw)
 
 
-#命名关键字参数
-#如果其中有一个可变参数，后面可以不加 *
-def person1(name,age,*args,city,job):
-    print(name,age,args,city,job)
+print(person('Bob', 20))
+print(person('Green', 36, city='BeiJing'))
+print(person('James', 52, gender='M', city='CAVS'))
 
-args = [1,2,3,4]
-print(person1('wang,',26,args,city='ShangHai',job='Sale'))
+# 简化代码
+extra = {'city': 'TaiYuan', 'Job': 'Android'}
+print(person('Jhon', 50, **extra))
+
+
+# 命名关键字参数
+# 如果其中有一个可变参数，后面可以不加 *
+def person1(name, age, *args, city, job):
+    print(name, age, args, city, job)
+
+
+args = [1, 2, 3, 4]
+print(person1('wang,', 26, args, city='ShangHai', job='Sale'))
+
 
 # 命名关键字前面加必须 *
-def person2(name,age,*,city,job):
-    print(name,age,city,job)
+def person2(name, age, *, city, job):
+    print(name, age, city, job)
 
-print(person2('zhao',30,city='GuangZhou',job='Business'))
 
-#参数组合
-#参数定义的顺序必须是：必选参数、默认参数、可变参数、命名关键字参数和关键字参数。
+print(person2('zhao', 30, city='GuangZhou', job='Business'))
 
-def f1(a,b=0,*c,d,**e):
-    print(a,b,c,d,e)
 
-c = (1,2,3)
-e = {'f':12}
-print(f1(1,2,*c,d = 0,**e))
+# 参数组合
+# 参数定义的顺序必须是：必选参数、默认参数、可变参数、命名关键字参数和关键字参数。
+
+def f1(a, b=0, *c, d, **e):
+    print(a, b, c, d, e)
+
+
+c = (1, 2, 3)
+e = {'f': 12}
+print(f1(1, 2, *c, d=0, **e))
+
 
 # 注意 ：*args是可变参数，args接收的是一个tuple；
 #       **kw是关键字参数，kw接收的是一个dict。
@@ -198,20 +216,33 @@ print(f1(1,2,*c,d = 0,**e))
 def fac(n):
     if n == 1:
         return 1
-    return n*fac(n-1)
+    return n * fac(n - 1)
+
 
 print(fac(5))
 print(fac(1))
 
-#递归调用的次数过多，会导致栈溢出,解决递归调用栈溢出的方法是通过尾递归优化.
-#尾递归是指，在函数返回的时候，调用自身本身，并且，return语句不能包含表达式,使递归本身无论调用多少次，都只占用一个栈帧.
 
-#尾递归
+# 递归调用的次数过多，会导致栈溢出,解决递归调用栈溢出的方法是通过尾递归优化.
+# 尾递归是指，在函数返回的时候，调用自身本身，并且，return语句不能包含表达式,使递归本身无论调用多少次，都只占用一个栈帧.
+
+# 尾递归
 def fac(n):
-    return fac_iter(n,1)
+    return fac_iter(n, 1)
 
-def fac_iter(num,product):
+
+def fac_iter(num, product):
     if num == 1:
         return product
-    return fac_iter(num - 1,num * product)
+    return fac_iter(num - 1, num * product)
+
+
 print(fac(5))
+
+print()
+L = []
+n = 1
+while n <= 99:
+    L.append(n)
+    print(n)
+    n = n + 2

@@ -173,3 +173,235 @@ class Bat(Mammal, Flyable):
 # 对需要 Fly 和 Run 方法的直接继承 Runnable、Flyable 类即可
 s = Bat()
 s.fly()
+
+
+# 定制类
+class Student(object):
+    def __init__(self, name):
+        self.name = name;
+
+    # __str()__返回一个字符串
+    def __str__(self):
+        return 'Student object (name:%s)' % self.name
+
+    __repr__ = __str__  # 可以这样写
+
+
+print(Student('Mick'))
+
+# __str()__返回用户看到的字符串，__repr()__返回开发者看到的字符串，是为调试服务的
+s = Student('Mick')
+print(s)
+
+
+# 如果一个类想被用于for ... in循环，类似list或tuple那样，就必须实现一个__iter__()方法，
+# 该方法返回一个迭代对象，然后，Python的for循环就会不断调用该迭代对象的__next__()方法
+# 拿到循环的下一个值，直到遇到StopIteration错误时退出循环。
+
+class Fib(object):
+    def __init__(self):
+        self.a, self.b = 0, 1  # 初始化计时器
+
+    def __iter__(self):  # 自身是迭代对象，返回自己
+        return self
+
+    def __next__(self):
+        self.a, self.b = self.b, self.b + self.a  # 计算下一个值
+
+        if self.a > 10000:
+            raise StopIteration()
+        return self.a  # 返回下一个值
+
+
+for n in Fib():
+    print(n)
+
+
+# 表现得像list那样按照下标取出元素，需要实现__getitem__()方法
+class Fib(object):
+    def __getitem__(self, n):
+        a, b = 1, 1
+        for x in range(n):
+            a, b = b, a + b
+        return a
+
+
+f = Fib()
+print(f[0])
+print(f[3])
+
+
+# 仿照list的切片方法
+class Fib(object):
+    def __getitem__(self, item):
+        if isinstance(item, int):  # item是索引
+            a, b = 1, 1
+            for x in range(n):
+                a, b = b, a + b
+            return a
+        if isinstance(item, slice):  # item 是切片
+            start = item.start
+            stop = item.stop
+            if start is None:
+                start = 0
+
+            a, b = 1, 1
+            L = []
+            for x in range(stop):
+                if x >= start:
+                    L.append(a)
+                a, b = b, a + b
+
+            return L
+
+
+f = Fib()
+print(f[0:5])
+print(f[:10])
+print(f[:5:2])
+
+
+# 与之对应的是__setitem__()方法，把对象视作list或dict来对集合赋值。
+# 最后，还有一个__delitem__()方法，用于删除某个元素。
+
+# __getattr()__方法，动态返回一个属性
+class Student(object):
+    def __init__(self):
+        self.name = "Mick"
+
+    def __getattr__(self, item):
+        if item == 'score':
+            return 99
+            # 或者return lambda : 25
+        raise AttributeError('Error')
+
+
+# 前者调用方式是s.score,后者是s.score()
+s = Student()
+print(s.name)
+print(s.score)
+
+
+# print(s.num)
+# print(s.score())
+
+
+# __call()__ 直接在实例本身上调用
+class Student(object):
+    def __init__(self, name):
+        self.name = name
+
+    def __call__(self):
+        print('My name is %s' % self.name)
+
+
+s = Student('Mick')
+print(s())
+
+# 判断一个对象是否是可调用对象
+print(callable(Student('Mick')))
+print(callable(max))
+print(callable([1, 2, 3]))
+print(callable('str'))
+print(callable(s))
+
+# 使用枚举类
+from enum import Enum
+
+# 定义一个枚举类
+Month = Enum('Month', ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'Jul', 'Aug', 'Sep', 'Obt', 'Nov', 'Dec'))
+# 枚举所有类型
+for name, member in Month.__members__.items():
+    print(name, '=>', member, ',', member.value)  # value属性是自动给成员int变量
+# 枚举单个类型
+print(Month.Jan)
+
+# 需要更精确的控制枚举类型，可以从Enum派生自定义类
+from enum import Enum, unique
+
+
+@unique
+class Weekday(Enum):
+    Sun = 0
+    Mon = 1
+    Tue = 2
+    Wen = 3
+    Thu = 4
+    Fri = 5
+    Sat = 6
+
+
+# @unique 可以帮助我们检查有没有重复值
+# 访问枚举类型
+day1 = Weekday.Mon  # 用成员变量访问枚举类型
+print(day1)
+print(Weekday['Tue'])
+print(Weekday.Thu.value)
+print(day1 == Weekday.Mon)
+print(Weekday(3))  # 根据value的值访问枚举类型
+for name, member in Weekday.__members__.items():
+    print(name, '=>', member)
+
+
+# 使用元类
+# type() 函数可以查看一个类型或变量的类型
+class Hello(object):
+    def hello(self, name='World'):
+        print('%s' % name)
+
+
+from Test8 import Hello
+
+h = Hello()
+h.hello()
+print(type(Hello))
+print(type(h))
+
+
+# 通过type()函数创建一个 Hello 类
+def fn(self, name="world"):
+    print('Hello,%s' % name)
+
+
+# 创建Hello类
+Hello = type('Hello', (object,), dict(hello=fn))
+h = Hello()
+h.hello()
+print(type(Hello))
+print(type(h))
+
+# type()函数动态创建一个类
+'''
+创建类时，type()函数传入3个参数:
+1.class的名称
+2.继承的父类集合(注意tuple的单元素写法)
+3.class的方法名称与函数绑定
+'''
+print('*******************************************')
+
+
+# 控制类的创建行为，使用metaclass
+# 先定义metaclass，然后创建类，最后创建实例
+# metaclass可以创建类和修改类，把类看成是metaclass创建出来的实例
+# 给MyList增加add()方法
+class Listmetaclass(type):
+    def __new__(cls, name, bases, attrs):
+        attrs['add'] = lambda self, value: self.append(value)
+        return type.__new__(cls, name, bases, attrs)
+
+
+class MyList(list, metaclass=Listmetaclass):
+    pass
+
+
+'''
+__new()__接收的参数是:
+1.当前准备创建的类的对象
+2.类的名字
+3.类继承的父类集合
+4.类的方法集合
+'''
+
+L = MyList()
+L.add(1)
+print(L)

@@ -132,3 +132,42 @@ try:
 except ZeroDivisionError:
     raise ValueError('input error!')
 # 不能把IOError转换成ValueError
+
+#断言
+#凡是可以用print()来查看的地方，都可以用断言assert来代替
+def foo(s):
+    n = int(s)
+    assert n != 0,'n is zero'
+    return 10/n
+
+def main():
+    foo('0')
+#assert的意思是表达式 n != 0应该是True，否则抛出错误
+
+# -0 参数可以关闭assert
+
+#logging
+#把print()替换为logging，logging不会抛出错误，而且可以输出到文件
+
+import logging
+logging.basicConfig(level = logging.INFO)
+#它允许你指定记录信息的级别，有debug，info，warning，error等几个级别，当我们指定level=INFO时，
+# logging.debug就不起作用了。同理，指定level=WARNING后，debug和info就不起作用了。这样一来，
+# 你可以放心地输出不同级别的信息，也不用删除，最后统一控制输出哪个级别的信息。
+
+#pdb
+#Python调试器pdb,让程序单步运行
+s = '0'
+n = int(s)
+print(10/n)
+# 输入命令l来查看代码,输入命令n可以单步执行代码,输入命令p 变量名来查看变量,输入命令q结束调试，退出程序
+
+#pdb.set_trace()，放在可能出错的地方
+import pdb
+s = '0'
+n = int(s)
+pdb.set_trace()
+print(10/n)
+
+# 单元测试
+#文档测试

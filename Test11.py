@@ -96,3 +96,114 @@ def loop():
 for i in range(multiprocessing.cpu_count()):
     t = threading.Thread(target = loop)
     t.start()
+
+#ThreadLocal,定义一个全局变量，然后绑定自己的局部变量，让每个线程访问自己的变量
+import threading
+#创建全局ThreadLocal对象
+local_school = threading.local()
+
+def process_student():
+    #获取当前线程关联的student
+    std = local_school.student
+    print ('Hello, %s (in %s)' % (std,threading.current_thread().name))
+
+def process_thread(name):
+    local_school.student = name
+    process_student()
+
+t1 = threading.Thread(target = process_thread,args = ('Alice',),name = 'Thread-A')
+t2 = threading.Thread(target = process_thread,args = ('Bob',),name = 'Thread-B')
+t1.start()
+t2.start()
+t1.join()
+t2.join()
+#一个ThreadLocal变量虽然是全局变量，但每个线程都只能读写自己线程的独立副本，互不干扰。ThreadLocal解决了参数在一个线程中各个函数之间互相传递的问题。
+
+#进程 VS 线程
+'''Master-Worker模式，Master负责分配任务,Worker负责执行任务，在多任务环境下，通常是一个Master,多个Worker.
+多进程实现Master-Worker,主进程是Master,其他进程是Worker
+多线程实现Master-Worker，主线程是Master,其他线程是Worker
+
+多进程模式最大的优点就是稳定性高，因为一个子进程崩溃了，不会影响主进程和其他子进程。多进程模式的缺点是创建进程的代价大.
+
+多线程模式通常比多进程快一点,多线程模式致命的缺点就是任何一个线程挂掉都可能直接造成整个进程崩溃，因为所有线程共享进程的内存。'''
+
+#线程切换
+#计算密集型 VS IO密集型
+'''计算密集型任务的特点是要进行大量的计算，消耗CPU资源.'''
+#异步IO
+
+#分布式进程
+#，Process可以分布到多台机器上，而Thread最多只能分布到同一台机器的多个CPU上。
+# managers子模块还支持把多进程分布到多台机器上。一个服务进程可以作为调度者，将任务分布到其他多个进程中，依靠网络通信。
+#服务进程负责启动Queue，把Queue注册到网络上，然后往Queue里面写入任务。
+import random,time,queue
+from multiprocessing.managers import BaseManager
+
+#发送任务的队列
+task_queue = queue.Queue()
+#接收结果的队列
+result_queue = queue.Queue()
+
+#从BaseManager继承的Queuemanager
+class QueueManager(BaseManager):
+    pass
+
+# 把两个Queue都注册到网络上, callable参数关联了Queue对象:
+QueueManager.register('get_task_queue', callable=lambda: task_queue)
+QueueManager.register('get_result_queue', callable=lambda: result_queue)
+# 绑定端口5000, 设置验证码'abc':
+manager = QueueManager(address=('', 5000), authkey=b'abc')
+# 启动Queue:
+manager.start()
+# 获得通过网络访问的Queue对象:
+task = manager.get_task_queue()
+result = manager.get_result_queue()
+# 放几个任务进去:
+for i in range(10):
+    n = random.randint(0, 10000)
+    print('Put task %d...' % n)
+    task.put(n)
+# 从result队列读取结果:
+print('Try get results...')
+for i in range(10):
+    r = result.get(timeout=10)
+    print('Result: %s' % r)
+# 关闭:
+manager.shutdown()
+print('master exit.')
+
+#在另一台机器上启动任务进程（本机上启动也可以）：
+import time, sys, queue
+from multiprocessing.managers import BaseManager
+
+# 创建类似的QueueManager:
+class QueueManager(BaseManager):
+    pass
+
+# 由于这个QueueManager只从网络上获取Queue，所以注册时只提供名字:
+QueueManager.register('get_task_queue')
+QueueManager.register('get_result_queue')
+
+# 连接到服务器，也就是运行task_master.py的机器:
+server_addr = '127.0.0.1'
+print('Connect to server %s...' % server_addr)
+# 端口和验证码注意保持与task_master.py设置的完全一致:
+m = QueueManager(address=(server_addr, 5000), authkey=b'abc')
+# 从网络连接:
+m.connect()
+# 获取Queue的对象:
+task = m.get_task_queue()
+result = m.get_result_queue()
+# 从task队列取任务,并把结果写入result队列:
+for i in range(10):
+    try:
+        n = task.get(timeout=1)
+        print('run task %d * %d...' % (n, n))
+        r = '%d * %d = %d' % (n, n, n*n)
+        time.sleep(1)
+        result.put(r)
+    except Queue.Empty:
+        print('task queue is empty.')
+# 处理结束:
+print('worker exit.')
